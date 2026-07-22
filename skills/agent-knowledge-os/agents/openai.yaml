@@ -1,0 +1,4 @@
+interface:
+  display_name: "Agent Knowledge OS"
+  short_description: "搭建可追溯、可审核、可持续迭代的个人知识操作系统工作流"
+  default_prompt: "使用 $agent-knowledge-os 引导我搭建或接管一套可持续运转的个人知识库。"
