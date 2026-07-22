@@ -257,7 +257,11 @@ class AgentKnowledgeOSTest(unittest.TestCase):
         public_files = [REPO / "README.md", REPO / "skills" / "agent-knowledge-os"]
         content = ""
         for entry in public_files:
-            paths = [entry] if entry.is_file() else [p for p in entry.rglob("*") if p.is_file()]
+            text_suffixes = {".md", ".py", ".yaml", ".yml", ".json", ".txt"}
+            paths = [entry] if entry.is_file() else [
+                p for p in entry.rglob("*")
+                if p.is_file() and p.suffix.lower() in text_suffixes and "__pycache__" not in p.parts
+            ]
             for path in paths:
                 content += path.read_text(encoding="utf-8")
         forbidden = [
