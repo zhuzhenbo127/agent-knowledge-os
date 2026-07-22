@@ -20,6 +20,7 @@ def run_script(name: str, *args: str) -> subprocess.CompletedProcess[str]:
         [sys.executable, "-B", str(SCRIPTS / name), *map(str, args)],
         capture_output=True,
         text=True,
+        encoding="utf-8",
         check=False,
     )
 

@@ -7,10 +7,18 @@ import hashlib
 import json
 import os
 import re
+import sys
 import tempfile
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Iterable
+
+# Windows runners may default redirected stdout/stderr to a legacy code page.
+# Every command emits Chinese paths and JSON, so make the CLI contract UTF-8.
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8")
+if hasattr(sys.stderr, "reconfigure"):
+    sys.stderr.reconfigure(encoding="utf-8")
 
 SCHEMA_VERSION = "1.0"
 SYSTEM_DIR = "99-系统·System"
