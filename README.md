@@ -27,6 +27,8 @@ npx skills add ./agent-knowledge-os --skill agent-knowledge-os
 
 不同 Agent 的 Skill 安装目录不同；若客户端不支持 `npx skills`，把 `skills/agent-knowledge-os/` 复制到该客户端的 Skills 目录即可。
 
+第一次使用建议直接阅读：[从零开始·USER_GUIDE.md](./从零开始·USER_GUIDE.md)。它按普通用户视角写明了安装、首次引导、第一份素材、第一次 ingest、人工审核、内容输出和日常维护。
+
 ## 快速开始
 
 安装后对 Agent 说：

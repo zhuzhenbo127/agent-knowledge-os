@@ -249,13 +249,14 @@ class AgentKnowledgeOSTest(unittest.TestCase):
     def test_publishable_repository_has_required_files_and_no_private_markers(self) -> None:
         required = [
             REPO / "README.md",
+            REPO / "从零开始·USER_GUIDE.md",
             REPO / "LICENSE",
             REPO / "skills" / "agent-knowledge-os" / "SKILL.md",
             REPO / "skills" / "agent-knowledge-os" / "agents" / "openai.yaml",
             REPO / ".github" / "workflows" / "validate.yml",
         ]
         self.assertTrue(all(path.is_file() for path in required))
-        public_files = [REPO / "README.md", REPO / "skills" / "agent-knowledge-os"]
+        public_files = [REPO / "README.md", REPO / "从零开始·USER_GUIDE.md", REPO / "skills" / "agent-knowledge-os"]
         content = ""
         for entry in public_files:
             text_suffixes = {".md", ".py", ".yaml", ".yml", ".json", ".txt"}
@@ -273,12 +274,12 @@ class AgentKnowledgeOSTest(unittest.TestCase):
         ]
         for marker in forbidden:
             self.assertNotIn(marker, content)
-        skill_text = required[2].read_text(encoding="utf-8")
+        skill_text = required[3].read_text(encoding="utf-8")
         frontmatter = skill_text.split("---", 2)[1]
         keys = [line.split(":", 1)[0] for line in frontmatter.splitlines() if ":" in line]
         self.assertEqual(keys, ["name", "description"])
         self.assertIn("name: agent-knowledge-os", frontmatter)
-        openai_yaml = required[3].read_text(encoding="utf-8")
+        openai_yaml = required[4].read_text(encoding="utf-8")
         self.assertIn("$agent-knowledge-os", openai_yaml)
         short_line = next(line for line in openai_yaml.splitlines() if "short_description:" in line)
         short_description = short_line.split(":", 1)[1].strip().strip('"')
