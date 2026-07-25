@@ -4,6 +4,16 @@
 
 它不是“一键自动整理全部资料”的承诺。AI 负责扫描、查重、候选草稿和重复劳动；人负责知识晋升、判断取舍、冲突解决与最终输出。
 
+## 客户最短使用方式
+
+客户不需要打开 GitHub，也不需要自己输入安装命令。只需把这句话发给支持 Agent Skills 的 Agent：
+
+> 安装并使用这个 Skill：https://github.com/zhuzhenbo127/agent-knowledge-os
+
+Agent 会读取仓库级安装协议，完成安装、验证，并直接进入首次个性化引导。某些 Agent 可能要求客户确认一次全局安装权限；这属于 Agent 自身的安全策略，不是 GitHub 登录或双重验证。
+
+详细说明见：[INSTALL.md](./INSTALL.md)。
+
 ## 适合谁
 
 - 第一次搭建个人知识库，希望得到清晰目录、规则和起步模板的人。
@@ -27,7 +37,7 @@ npx skills add ./agent-knowledge-os --skill agent-knowledge-os
 
 不同 Agent 的 Skill 安装目录不同；若客户端不支持 `npx skills`，把 `skills/agent-knowledge-os/` 复制到该客户端的 Skills 目录即可。
 
-第一次使用建议直接阅读：[从零开始·USER_GUIDE.md](./从零开始·USER_GUIDE.md)。它按普通用户视角写明了安装、首次引导、第一份素材、第一次 ingest、人工审核、内容输出和日常维护。
+第一次使用建议直接阅读：[从零开始·USER_GUIDE.md](./从零开始·USER_GUIDE.md)。它按普通用户视角写明了首次引导、第一份素材、第一次 ingest、人工审核、内容输出和日常维护。
 
 ## 快速开始
 

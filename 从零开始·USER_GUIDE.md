@@ -15,7 +15,23 @@
 
 这不是全自动知识库。AI 负责扫描、查重和草拟候选知识；你负责确认什么值得进入正式知识库。
 
-## 第 0 步：准备工具
+## 最简单的安装方式
+
+客户不需要打开 GitHub，也不需要自己输入终端命令。把下面这句话发给支持 Agent Skills 的 Agent：
+
+> 安装并使用这个 Skill：https://github.com/zhuzhenbo127/agent-knowledge-os
+
+Agent 会自动选择原生 Skill 安装器或通用安装器，完成安装和验证，然后开始首次引导。
+
+部分 Agent 会在全局安装前要求确认一次权限。这是 Agent 自身的安全机制，不是 GitHub 登录，也不是双重验证。
+
+如果 Agent 只总结仓库而没有安装，补发：
+
+> 不要总结网页。请按照仓库根目录的 `AGENTS.md` 安装 `agent-knowledge-os`，验证后立即开始首次引导。
+
+下面的工具准备和手工命令只用于排查安装问题，普通客户可以直接跳到“第 2 步”。
+
+## 第 0 步：备用环境检查
 
 你需要：
 
@@ -37,15 +53,15 @@ Windows 如果没有 `python3` 命令，可以尝试：
 python --version
 ```
 
-## 第 1 步：安装 Skill
+## 第 1 步：手工安装备用方案
 
-在终端运行：
+只有 Agent 无法自动安装时，才在终端运行：
 
 ```bash
 npx skills add https://github.com/zhuzhenbo127/agent-knowledge-os --skill agent-knowledge-os
 ```
 
-安装器会询问要安装到哪个 Agent。选择你平时使用的 Agent 即可。
+安装器会询问要安装到哪个 Agent。选择你平时使用的 Agent 即可。普通客户无需执行这一节。
 
 如果希望在所有项目中使用，可以按安装器提示选择全局安装，或运行：
 

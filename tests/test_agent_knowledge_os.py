@@ -249,6 +249,8 @@ class AgentKnowledgeOSTest(unittest.TestCase):
     def test_publishable_repository_has_required_files_and_no_private_markers(self) -> None:
         required = [
             REPO / "README.md",
+            REPO / "AGENTS.md",
+            REPO / "INSTALL.md",
             REPO / "从零开始·USER_GUIDE.md",
             REPO / "LICENSE",
             REPO / "skills" / "agent-knowledge-os" / "SKILL.md",
@@ -256,7 +258,10 @@ class AgentKnowledgeOSTest(unittest.TestCase):
             REPO / ".github" / "workflows" / "validate.yml",
         ]
         self.assertTrue(all(path.is_file() for path in required))
-        public_files = [REPO / "README.md", REPO / "从零开始·USER_GUIDE.md", REPO / "skills" / "agent-knowledge-os"]
+        public_files = [
+            REPO / "README.md", REPO / "AGENTS.md", REPO / "INSTALL.md",
+            REPO / "从零开始·USER_GUIDE.md", REPO / "skills" / "agent-knowledge-os",
+        ]
         content = ""
         for entry in public_files:
             text_suffixes = {".md", ".py", ".yaml", ".yml", ".json", ".txt"}
@@ -274,17 +279,24 @@ class AgentKnowledgeOSTest(unittest.TestCase):
         ]
         for marker in forbidden:
             self.assertNotIn(marker, content)
-        skill_text = required[3].read_text(encoding="utf-8")
+        skill_text = required[5].read_text(encoding="utf-8")
         frontmatter = skill_text.split("---", 2)[1]
         keys = [line.split(":", 1)[0] for line in frontmatter.splitlines() if ":" in line]
         self.assertEqual(keys, ["name", "description"])
         self.assertIn("name: agent-knowledge-os", frontmatter)
-        openai_yaml = required[4].read_text(encoding="utf-8")
+        openai_yaml = required[6].read_text(encoding="utf-8")
         self.assertIn("$agent-knowledge-os", openai_yaml)
         short_line = next(line for line in openai_yaml.splitlines() if "short_description:" in line)
         short_description = short_line.split(":", 1)[1].strip().strip('"')
         self.assertGreaterEqual(len(short_description), 25)
         self.assertLessEqual(len(short_description), 64)
+
+        install_protocol = (REPO / "AGENTS.md").read_text(encoding="utf-8")
+        self.assertIn("npx --yes skills@latest add", install_protocol)
+        self.assertIn("--skill agent-knowledge-os", install_protocol)
+        self.assertIn("Do not ask the user to log in to GitHub", install_protocol)
+        customer_install = (REPO / "INSTALL.md").read_text(encoding="utf-8")
+        self.assertIn("安装并使用这个 Skill：https://github.com/zhuzhenbo127/agent-knowledge-os", customer_install)
 
 
 if __name__ == "__main__":
