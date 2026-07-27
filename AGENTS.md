@@ -26,7 +26,8 @@ Common identifiers:
 3. If `npx skills` does not support the current Agent, clone the public repository and copy `skills/agent-knowledge-os/` into that Agent's documented global Skills directory.
 4. Do not ask the user to log in to GitHub. This is a public repository and supports anonymous Git reads.
 5. Do not request GitHub `repo` or `workflow` permissions for installation. Those permissions are only for repository maintainers.
-6. Do not install Obsidian itself. Community Obsidian plugins remain optional and require the user's explicit choice during onboarding.
+6. Do not treat Skill installation as authorization to install Obsidian. During onboarding, first detect Obsidian; when it is missing, ask whether the user authorizes automatic installation. Run the bundled installer only after that choice appears in the final confirmation sheet and the user confirms it.
+7. Obsidian application authorization does not authorize community plugins. Dataview and Templater remain separate opt-in choices.
 
 If the Agent's security policy requires approval before global installation or command execution, show the exact action and request that single required approval. Do not claim to have bypassed it.
 

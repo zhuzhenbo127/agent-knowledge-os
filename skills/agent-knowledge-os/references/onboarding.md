@@ -18,11 +18,21 @@
 5. **资产类型**：概念和方法论必选；案例、模板、表达规则、决策可选。
 6. **复查与过期**：默认周期、必须过期的类型、长期保留的第一方经验。
 7. **隐私与 AI**：脱敏类型、只读目录、客户/聊天/账号/密钥、AI 写入范围。
-8. **Obsidian**：默认核心插件；Dataview、Templater 分别明确选择。
+8. **Obsidian**：先运行 `install_obsidian.py --check`。已安装则不追问；未安装时询问是否授权自动安装。再分别确认 Dataview、Templater；安装应用的授权不包含社区插件。
+
+`obsidian.app` 记录选择：已安装为 `use_existing`，授权补装为 `install_if_missing`，明确不使用为 `skip`。
 
 ## 确认单
 
-确认单必须列出：目标路径、模式、新建/保留目录、身份、任务、领域、来源、资产、复查、隐私、Obsidian、不会执行的动作。结尾明确询问是否确认写入。
+确认单必须列出：目标路径、模式、新建/保留目录、身份、任务、领域、来源、资产、复查、隐私、Obsidian 检测结果、安装策略与作用范围、社区插件选择、不会执行的动作。结尾明确询问是否确认。这一次确认可同时授权创建 Vault 和安装 Obsidian，避免重复询问。
+
+用户确认后，如配置为 `install_if_missing`，先运行：
+
+```bash
+python3 scripts/install_obsidian.py --install --confirmed
+```
+
+安装失败时报告具体原因与官方下载地址，仍可继续生成 Markdown 知识库；不把 Obsidian 安装失败伪装成全流程成功。
 
 ## 配置输入示例
 
@@ -42,7 +52,7 @@
     "asset_types": ["概念", "方法论", "案例", "模板"],
     "review_policy": {"default_days": 180, "tool_days": 60, "platform_rule_days": 30},
     "privacy_policy": {"redact": ["客户资料", "私人聊天", "密钥"], "read_only_paths": [], "ai_write_requires_confirmation": true},
-    "obsidian": {"enable_core_plugins": true, "community_packs": []}
+    "obsidian": {"app": "install_if_missing", "enable_core_plugins": true, "community_packs": []}
   }
 }
 ```

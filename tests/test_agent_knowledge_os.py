@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import hashlib
+import importlib.util
 import json
 import subprocess
 import sys
@@ -13,6 +14,12 @@ from pathlib import Path
 REPO = Path(__file__).resolve().parents[1]
 SCRIPTS = REPO / "skills" / "agent-knowledge-os" / "scripts"
 SYSTEM = "99-系统·System"
+
+sys.path.insert(0, str(SCRIPTS))
+INSTALL_OBSIDIAN_SPEC = importlib.util.spec_from_file_location("install_obsidian", SCRIPTS / "install_obsidian.py")
+assert INSTALL_OBSIDIAN_SPEC and INSTALL_OBSIDIAN_SPEC.loader
+INSTALL_OBSIDIAN = importlib.util.module_from_spec(INSTALL_OBSIDIAN_SPEC)
+INSTALL_OBSIDIAN_SPEC.loader.exec_module(INSTALL_OBSIDIAN)
 
 
 def run_script(name: str, *args: str) -> subprocess.CompletedProcess[str]:
@@ -41,7 +48,7 @@ def profile(**overrides: object) -> dict:
             "asset_types": ["概念", "方法论", "案例", "模板"],
             "review_policy": {"default_days": 180, "platform_rule_days": 30},
             "privacy_policy": {"redact": ["客户资料", "私人聊天", "密钥"], "read_only_paths": [], "ai_write_requires_confirmation": True},
-            "obsidian": {"enable_core_plugins": True, "community_packs": []},
+            "obsidian": {"app": "install_if_missing", "enable_core_plugins": True, "community_packs": []},
         }
     }
     value["profile"].update(overrides)
@@ -81,6 +88,7 @@ class AgentKnowledgeOSTest(unittest.TestCase):
             self.assertTrue((vault / name).is_dir(), name)
         config = json.loads((vault / SYSTEM / "config.json").read_text(encoding="utf-8"))
         self.assertEqual(config["onboarding"]["status"], "complete")
+        self.assertEqual(config["profile"]["obsidian"]["app"], "install_if_missing")
         self.assertNotIn("{{", json.dumps(config, ensure_ascii=False))
         self.assertTrue((vault / "02-概念·Concepts" / "人工智能·AI").is_dir())
         self.assertTrue((vault / "90-知识地图·MOCs" / "人工智能·AI·MOC.md").is_file())
@@ -155,6 +163,39 @@ class AgentKnowledgeOSTest(unittest.TestCase):
         result = run_script("setup_obsidian.py", "--vault", vault, "--community-pack", "dataview")
         self.assertEqual(result.returncode, 2)
         self.assertFalse((vault / ".obsidian").exists())
+
+    def test_obsidian_app_install_requires_confirmation_and_has_safe_dry_run(self) -> None:
+        refused = run_script("install_obsidian.py", "--install", "--platform", "linux")
+        self.assertEqual(refused.returncode, 2)
+        self.assertIn("--confirmed", refused.stderr)
+
+        preview = run_script("install_obsidian.py", "--install", "--dry-run", "--platform", "linux")
+        self.assertEqual(preview.returncode, 0, preview.stderr)
+        payload = json.loads(preview.stdout)
+        self.assertEqual(payload["plan"]["strategy"], "official-appimage-user")
+        self.assertEqual(payload["plan"]["source"], "https://obsidian.md/download")
+
+    def test_obsidian_profile_rejects_unapproved_community_plugins(self) -> None:
+        invalid = profile(obsidian={"app": "install_if_missing", "community_packs": ["unknown-plugin"]})
+        self.profile_path.write_text(json.dumps(invalid, ensure_ascii=False), encoding="utf-8")
+        result = run_script("bootstrap.py", "--vault", self.root / "invalid", "--profile", self.profile_path, "--confirmed")
+        self.assertEqual(result.returncode, 2)
+        self.assertFalse((self.root / "invalid").exists())
+
+    def test_obsidian_release_asset_selection_rejects_untrusted_urls(self) -> None:
+        prefix = "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.2.3/"
+        release = {"assets": [
+            {"name": "Obsidian-1.2.3.dmg", "browser_download_url": prefix + "Obsidian-1.2.3.dmg"},
+            {"name": "Obsidian-1.2.3.exe", "browser_download_url": prefix + "Obsidian-1.2.3.exe"},
+            {"name": "Obsidian-1.2.3.AppImage", "browser_download_url": prefix + "Obsidian-1.2.3.AppImage"},
+            {"name": "Obsidian-1.2.3-arm64.AppImage", "browser_download_url": prefix + "Obsidian-1.2.3-arm64.AppImage"},
+        ]}
+        self.assertEqual(INSTALL_OBSIDIAN.asset_for(release, "linux", "x86_64")["name"], "Obsidian-1.2.3.AppImage")
+        self.assertEqual(INSTALL_OBSIDIAN.asset_for(release, "linux", "arm64")["name"], "Obsidian-1.2.3-arm64.AppImage")
+
+        release["assets"][1]["browser_download_url"] = "https://example.com/Obsidian-1.2.3.exe"
+        with self.assertRaises(INSTALL_OBSIDIAN.KnowledgeOSError):
+            INSTALL_OBSIDIAN.asset_for(release, "windows")
 
     def test_discover_verify_and_hash_based_dedup(self) -> None:
         vault = self.bootstrap()

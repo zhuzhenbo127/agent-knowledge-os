@@ -233,8 +233,22 @@ def normalize_config(payload: dict[str, Any]) -> dict[str, Any]:
         "ai_write_requires_confirmation": True,
     }
     obsidian = profile.get("obsidian") or {
+        "app": "install_if_missing",
         "enable_core_plugins": True,
         "community_packs": [],
+    }
+    if not isinstance(obsidian, dict):
+        raise KnowledgeOSError("obsidian 必须是 JSON 对象")
+    app_mode = obsidian.get("app", "use_existing")
+    if app_mode not in {"install_if_missing", "use_existing", "skip"}:
+        raise KnowledgeOSError("obsidian.app 必须是 install_if_missing、use_existing 或 skip")
+    community_packs = obsidian.get("community_packs", [])
+    if not isinstance(community_packs, list) or any(item not in {"dataview", "templater"} for item in community_packs):
+        raise KnowledgeOSError("obsidian.community_packs 只能包含 dataview 或 templater")
+    obsidian = {
+        "app": app_mode,
+        "enable_core_plugins": bool(obsidian.get("enable_core_plugins", True)),
+        "community_packs": list(dict.fromkeys(community_packs)),
     }
 
     config = {

@@ -20,7 +20,7 @@ description: 搭建、接管和维护基于 Markdown 与 Obsidian 的个人知�
 | 生成内容 | `produce` | `references/content-production.md` |
 | 记录真实交付 | `feedback` | `references/feedback-loop.md` |
 | 检查健康状态 | `lint` | `references/lint-and-status.md` |
-| 配置 Obsidian | Obsidian 设置 | `references/obsidian-setup.md` |
+| 安装或配置 Obsidian | Obsidian 设置 | `references/obsidian-setup.md` |
 
 课程能力映射见 `references/course-map.md`。架构职责见 `references/architecture.md`。
 
@@ -48,7 +48,7 @@ description: 搭建、接管和维护基于 Markdown 与 Obsidian 的个人知�
 python3 scripts/bootstrap.py --vault "/absolute/path/to/vault" --profile "/path/to/profile.json" --confirmed
 ```
 
-5. 按 `references/obsidian-setup.md` 配置 Obsidian。社区插件只在用户明确选择后安装。
+5. 按 `references/obsidian-setup.md` 检测 Obsidian。未安装时，只在确认单已列出安装策略且用户明确确认后自动安装。社区插件另行选择。
 6. 运行 `lint_vault.py` 与 `verify_run.py`，回报文件清单和下一步 Todo。
 
 ## Adopt：接管已有知识库
@@ -107,6 +107,7 @@ Lint 只报告问题，不自动删除、晋升或修改正式知识。
 ## 安全操作
 
 - 把所有用户路径视为数据，不拼接 shell 命令。
+- 安装 Obsidian 前必须显示系统、安装渠道和作用范围，并获得用户确认；不绕过操作系统权限提示。
 - 写入前解析目标路径，拒绝越出 Vault 的路径。
 - 新建模式拒绝非空目录；接管模式只增量创建缺失文件。
 - 失败时保留旧配置和备份，不把 onboarding 标成完成。
