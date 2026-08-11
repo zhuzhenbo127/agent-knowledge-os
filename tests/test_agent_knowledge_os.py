@@ -339,6 +339,12 @@ class AgentKnowledgeOSTest(unittest.TestCase):
         customer_install = (REPO / "INSTALL.md").read_text(encoding="utf-8")
         self.assertIn("安装并使用这个 Skill：https://github.com/zhuzhenbo127/agent-knowledge-os", customer_install)
 
+        onboarding = (REPO / "skills" / "agent-knowledge-os" / "references" / "onboarding.md").read_text(encoding="utf-8")
+        self.assertIn("你平时最想让这个资料库帮你做哪件事", onboarding)
+        self.assertIn("选项是启发，不是必选菜单", onboarding)
+        self.assertIn("不要让用户自己想英文名", onboarding)
+        self.assertNotIn("最多三个；内容创作、研究、决策", onboarding)
+
 
 if __name__ == "__main__":
     unittest.main()
